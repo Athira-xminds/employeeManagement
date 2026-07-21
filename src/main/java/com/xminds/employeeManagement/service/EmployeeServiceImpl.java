@@ -5,6 +5,7 @@ import com.xminds.employeeManagement.dto.EmployeeResponse;
 import com.xminds.employeeManagement.entity.Department;
 import com.xminds.employeeManagement.entity.Employee;
 import com.xminds.employeeManagement.entity.EmployeeProfile;
+import com.xminds.employeeManagement.exception.DepartmentNotFoundException;
 import com.xminds.employeeManagement.exception.EmployeeNotFoundException;
 import com.xminds.employeeManagement.repository.DepartmentRepository;
 import com.xminds.employeeManagement.repository.EmployeeRepository;
@@ -25,7 +26,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeResponse createEmployee(Long departmentId, EmployeeRequest request) {
         Department department = departmentRepository.findById(departmentId)
-                .orElseThrow(() -> new IllegalArgumentException("Department not found with id " + departmentId));
+                .orElseThrow(() -> new DepartmentNotFoundException("Department not found with id " + departmentId));
 
         EmployeeProfile profile = new EmployeeProfile();
         profile.setAddress(request.address());
@@ -47,7 +48,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Department department = null;
         if (request.departmentId() != null) {
             department = departmentRepository.findById(request.departmentId())
-                    .orElseThrow(() -> new IllegalArgumentException("Department not found with id " + request.departmentId()));
+                    .orElseThrow(() -> new DepartmentNotFoundException("Department not found with id " + request.departmentId()));
         }
 
         EmployeeProfile profile = new EmployeeProfile();
@@ -84,7 +85,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         if (request.departmentId() != null) {
             Department department = departmentRepository.findById(request.departmentId())
-                    .orElseThrow(() -> new IllegalArgumentException("Department not found with id " + request.departmentId()));
+                    .orElseThrow(() -> new DepartmentNotFoundException("Department not found with id " + request.departmentId()));
             employee.setDepartment(department);
         } else {
             employee.setDepartment(null);

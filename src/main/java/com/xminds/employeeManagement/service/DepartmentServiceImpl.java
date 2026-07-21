@@ -7,6 +7,7 @@ import com.xminds.employeeManagement.entity.Department;
 import com.xminds.employeeManagement.entity.Employee;
 import com.xminds.employeeManagement.entity.EmployeeProfile;
 import com.xminds.employeeManagement.repository.DepartmentRepository;
+import com.xminds.employeeManagement.exception.DepartmentNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
