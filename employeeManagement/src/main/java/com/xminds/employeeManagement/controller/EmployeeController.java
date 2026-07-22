@@ -51,6 +51,31 @@ public class EmployeeController {
             @RequestBody EmployeeRequest request) {
         return service.createEmployee(departmentId, request);
     }
+    @GetMapping("/employees/salary-range")
+    public List<EmployeeResponse> getEmployeesBySalaryRange(
+            @RequestParam Double min,
+            @RequestParam Double max) {
+        return service.getEmployeesBySalaryRange(min, max);
+    }
+
+    @GetMapping("/employees/search")
+    public List<EmployeeResponse> searchEmployeesByName(@RequestParam String name) {
+        return service.searchEmployeesByName(name);
+    }
+
+    @GetMapping("/employees/filter")
+    public List<EmployeeResponse> getEmployeesByDeptAndMinSalary(
+            @RequestParam Long deptId,
+            @RequestParam Double minSalary) {
+        return service.getEmployeesByDeptAndMinSalary(deptId, minSalary);
+    }
+
+    @GetMapping("/employees/by-department")
+    public List<EmployeeResponse> getEmployeesByDepartmentName(@RequestParam String deptName) {
+        return service.getEmployeesByDepartmentName(deptName);
+    }
+
+
 
 
 }
