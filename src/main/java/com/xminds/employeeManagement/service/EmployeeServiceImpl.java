@@ -5,12 +5,18 @@ import com.xminds.employeeManagement.dto.EmployeeResponse;
 import com.xminds.employeeManagement.entity.Department;
 import com.xminds.employeeManagement.entity.Employee;
 import com.xminds.employeeManagement.entity.EmployeeProfile;
+import com.xminds.employeeManagement.entity.Project;
 import com.xminds.employeeManagement.exception.EmployeeNotFoundException;
 import com.xminds.employeeManagement.exception.DepartmentNotFoundException;
 import com.xminds.employeeManagement.repository.DepartmentRepository;
 import com.xminds.employeeManagement.repository.EmployeeRepository;
+import com.xminds.employeeManagement.repository.ProjectRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -18,9 +24,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository repository;
     private final DepartmentRepository departmentRepository;
 
-    public EmployeeServiceImpl(EmployeeRepository repository, DepartmentRepository departmentRepository) {
+    private final ProjectRepository projectRepository;
+
+    public EmployeeServiceImpl(EmployeeRepository repository, DepartmentRepository departmentRepository, ProjectRepository projectRepository) {
         this.repository = repository;
         this.departmentRepository = departmentRepository;
+        this.projectRepository = projectRepository;
+
     }
 
     @Override
@@ -113,6 +123,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private EmployeeResponse mapToResponse(Employee employee) {
         EmployeeProfile profile = employee.getEmployeeProfile();
+
+        java.util.Set<com.xminds.employeeManagement.dto.ProjectResponse> projectDTOs =
+                employee.getProjects().stream()
+                        .map(p -> new com.xminds.employeeManagement.dto.ProjectResponse(p.getProjectId(), p.getProjectName()))
+                        .collect(java.util.stream.Collectors.toSet());
+
         return new EmployeeResponse(
                 employee.getEmployeeId(),
                 employee.getEmployeeName(),
@@ -121,9 +137,11 @@ public class EmployeeServiceImpl implements EmployeeService {
                 profile != null ? profile.getAddress() : null,
                 profile != null ? profile.getPhoneNumber() : null,
                 profile != null ? profile.getDateOfBirth() : null,
-                employee.getDepartment() != null ? employee.getDepartment().getId() : null
+                employee.getDepartment() != null ? employee.getDepartment().getId() : null,
+                projectDTOs
         );
     }
+
     @Override
     public List<EmployeeResponse> getEmployeesBySalaryRange(Double minSalary, Double maxSalary) {
         return repository.findBySalaryBetween(minSalary, maxSalary).stream()
@@ -149,6 +167,48 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<EmployeeResponse> getEmployeesByDepartmentName(String deptName) {
         return repository.findEmployeesByDepartmentName(deptName).stream()
                 .map(this::mapToResponse)
+                .toList();
+    }
+    @Override
+    public Page<EmployeeResponse> getEmployeesByDepartmentPaginated(Long departmentId, Pageable pageable) {
+        return repository.findByDepartmentId(departmentId, pageable)
+                .map(this::mapToResponse);
+    }
+
+    @Override
+    public Page<EmployeeResponse> getHighSalaryEmployeesPaginated(Double minSalary, Pageable pageable) {
+        return repository.findHighSalaryEmployees(minSalary, pageable)
+                .map(this::mapToResponse);
+    }
+
+    @Override
+    public void assignProjectToEmployee(Long employeeId, Long projectId) {
+        Employee employee = repository.findById(employeeId)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id " + employeeId));
+
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("Project not found with id " + projectId));
+
+        employee.addProject(project);
+        repository.save(employee);
+    }
+
+    @Override
+    public void allocateEmployeeToProject(Long projectId, Long employeeId) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new IllegalArgumentException("Project not found with id " + projectId));
+
+        Employee employee = repository.findById(employeeId)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id " + employeeId));
+
+        project.addEmployee(employee);
+        projectRepository.save(project);
+    }
+    @Override
+    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    public List<com.xminds.employeeManagement.dto.ProjectResponse> getAllProjects() {
+        return projectRepository.findAll().stream()
+                .map(p -> new com.xminds.employeeManagement.dto.ProjectResponse(p.getProjectId(), p.getProjectName()))
                 .toList();
     }
 
