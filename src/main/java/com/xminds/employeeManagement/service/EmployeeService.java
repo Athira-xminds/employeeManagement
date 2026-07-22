@@ -15,6 +15,13 @@ public interface EmployeeService {
     void delete(Long id);
     EmployeeResponse createEmployee(Long departmentId, EmployeeRequest request);
 
+    List<EmployeeResponse> getEmployeesBySalaryRange(Double minSalary, Double maxSalary);
+    List<EmployeeResponse> searchEmployeesByName(String searchText);
+    List<EmployeeResponse> getEmployeesByDeptAndMinSalary(Long deptId, Double minSalary);
+    List<EmployeeResponse> getEmployeesByDepartmentName(String deptName);
+
+
+
 }
 
 
