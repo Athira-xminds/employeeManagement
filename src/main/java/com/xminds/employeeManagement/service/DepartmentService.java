@@ -10,4 +10,5 @@ public interface DepartmentService {
     List<DepartmentResponse> getAllDepartments();
     DepartmentResponse getDepartmentById(Long id);
     List<EmployeeResponse> getEmployeesByDepartmentId(Long departmentId);
+    List<EmployeeResponse> getEmployeesWithSalaryGreaterThan(Double salary);
 }
