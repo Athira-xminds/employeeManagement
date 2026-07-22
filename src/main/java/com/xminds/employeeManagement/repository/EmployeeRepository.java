@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -22,5 +24,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
                                                    @Param("minSalary") Double minSalary);
     @Query("SELECT e FROM Employee e JOIN e.department d WHERE d.name = :deptName")
     List<Employee> findEmployeesByDepartmentName(@Param("deptName") String deptName);
+
+    @Query("SELECT e FROM Employee e WHERE e.salary > :minSalary")
+    Page<Employee> findHighSalaryEmployees(@Param("minSalary") Double minSalary, Pageable pageable);
+    Page<Employee> findByDepartmentId(Long departmentId, Pageable pageable);
 
 }
