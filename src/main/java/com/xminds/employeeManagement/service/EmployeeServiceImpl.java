@@ -5,8 +5,8 @@ import com.xminds.employeeManagement.dto.EmployeeResponse;
 import com.xminds.employeeManagement.entity.Department;
 import com.xminds.employeeManagement.entity.Employee;
 import com.xminds.employeeManagement.entity.EmployeeProfile;
-import com.xminds.employeeManagement.exception.DepartmentNotFoundException;
 import com.xminds.employeeManagement.exception.EmployeeNotFoundException;
+import com.xminds.employeeManagement.exception.DepartmentNotFoundException;
 import com.xminds.employeeManagement.repository.DepartmentRepository;
 import com.xminds.employeeManagement.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
@@ -124,4 +124,33 @@ public class EmployeeServiceImpl implements EmployeeService {
                 employee.getDepartment() != null ? employee.getDepartment().getId() : null
         );
     }
+    @Override
+    public List<EmployeeResponse> getEmployeesBySalaryRange(Double minSalary, Double maxSalary) {
+        return repository.findBySalaryBetween(minSalary, maxSalary).stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    public List<EmployeeResponse> searchEmployeesByName(String searchText) {
+        return repository.findByEmployeeNameContainingIgnoreCase(searchText).stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    public List<EmployeeResponse> getEmployeesByDeptAndMinSalary(Long deptId, Double minSalary) {
+        return repository.findEmployeesByDeptAndMinSalary(deptId, minSalary).stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    @Override
+    public List<EmployeeResponse> getEmployeesByDepartmentName(String deptName) {
+        return repository.findEmployeesByDepartmentName(deptName).stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+
 }
