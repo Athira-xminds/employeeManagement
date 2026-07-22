@@ -8,11 +8,17 @@ import com.xminds.employeeManagement.entity.Employee;
 import com.xminds.employeeManagement.entity.EmployeeProfile;
 import com.xminds.employeeManagement.repository.DepartmentRepository;
 import com.xminds.employeeManagement.exception.DepartmentNotFoundException;
+import com.xminds.employeeManagement.repository.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
 
     private final DepartmentRepository departmentRepository;
 
@@ -76,4 +82,12 @@ public class DepartmentServiceImpl implements DepartmentService {
                 employee.getDepartment() != null ? employee.getDepartment().getId() : null
         );
     }
+    @Override
+    public List<EmployeeResponse> getEmployeesWithSalaryGreaterThan(Double salary) {
+        List<Employee> employees = employeeRepository.findEmployeesWithSalaryGreaterThan(salary);
+        return employees.stream()
+                .map(this::mapToEmployeeResponse)
+                .toList();
+    }
+
 }
