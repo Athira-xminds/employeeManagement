@@ -1,6 +1,9 @@
 package com.xminds.employeeManagement.entity;
 
 import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "employee")
@@ -22,6 +25,24 @@ public class Employee {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "profile_id")
     private EmployeeProfile employeeProfile;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+
+            name = "employee_project",
+
+            joinColumns = @JoinColumn(name = "employee_id"),
+
+            inverseJoinColumns = @JoinColumn(name = "project_id")
+
+    )
+
+    private Set<Project> projects = new HashSet<>();
+    public void addProject(Project project) {
+        this.projects.add(project);
+        project.getEmployees().add(this);
+    }
+
 
     public Employee() {}
 
@@ -56,4 +77,9 @@ public class Employee {
     public void setEmployeeProfile(EmployeeProfile employeeProfile) {
         this.employeeProfile = employeeProfile;
     }
+
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
 }
