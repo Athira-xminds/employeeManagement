@@ -39,5 +39,10 @@ public class DepartmentController {
         return departmentService.getEmployeesByDepartmentId(departmentId);
     }
 
+    @GetMapping("/employees/high-salary")
+    public List<EmployeeResponse> getHighSalaryEmployees(@RequestParam Double salary) {
+        return departmentService.getEmployeesWithSalaryGreaterThan(salary);
+    }
+
 
 }
