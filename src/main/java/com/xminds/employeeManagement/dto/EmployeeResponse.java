@@ -1,4 +1,6 @@
 package com.xminds.employeeManagement.dto;
+import java.util.Set;
+
 
 public record EmployeeResponse(
         Long employeeId,
@@ -8,6 +10,7 @@ public record EmployeeResponse(
         String address,
         String phoneNumber,
         String dateOfBirth,
-        Long departmentId
+        Long departmentId,
+        Set<ProjectResponse> projects
 ) {}
 
