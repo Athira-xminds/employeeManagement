@@ -3,26 +3,30 @@ package com.xminds.employeeManagement.service;
 import com.xminds.employeeManagement.dto.DepartmentRequest;
 import com.xminds.employeeManagement.dto.DepartmentResponse;
 import com.xminds.employeeManagement.dto.EmployeeResponse;
+import com.xminds.employeeManagement.dto.ProjectResponse;
 import com.xminds.employeeManagement.entity.Department;
 import com.xminds.employeeManagement.entity.Employee;
 import com.xminds.employeeManagement.entity.EmployeeProfile;
+import com.xminds.employeeManagement.entity.Project;
 import com.xminds.employeeManagement.repository.DepartmentRepository;
 import com.xminds.employeeManagement.exception.DepartmentNotFoundException;
 import com.xminds.employeeManagement.repository.EmployeeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
-
-
+    private final EmployeeRepository employeeRepository;
     private final DepartmentRepository departmentRepository;
 
-    public DepartmentServiceImpl(DepartmentRepository departmentRepository) {
+    public DepartmentServiceImpl(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository) {
+        this.employeeRepository = employeeRepository;
         this.departmentRepository = departmentRepository;
     }
 
@@ -38,6 +42,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DepartmentResponse> getAllDepartments() {
         return departmentRepository.findAll().stream()
                 .map(this::mapToDepartmentResponse)
@@ -45,6 +50,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public DepartmentResponse getDepartmentById(Long id) {
         Department department = departmentRepository.findById(id)
                 .orElseThrow(() -> new DepartmentNotFoundException("Department not found with id " + id));
@@ -52,6 +58,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EmployeeResponse> getEmployeesByDepartmentId(Long departmentId) {
         Department department = departmentRepository.findById(departmentId)
                 .orElseThrow(() -> new DepartmentNotFoundException("Department not found with id " + departmentId));
@@ -68,14 +75,12 @@ public class DepartmentServiceImpl implements DepartmentService {
         return new DepartmentResponse(department.getId(), department.getName(), employeeResponses);
     }
 
-
     private EmployeeResponse mapToEmployeeResponse(Employee employee) {
         EmployeeProfile profile = employee.getEmployeeProfile();
 
-        java.util.Set<com.xminds.employeeManagement.dto.ProjectResponse> projectDTOs =
-                employee.getProjects().stream()
-                        .map(p -> new com.xminds.employeeManagement.dto.ProjectResponse(p.getProjectId(), p.getProjectName()))
-                        .collect(java.util.stream.Collectors.toSet());
+        Set<ProjectResponse> projectDTOs = employee.getProjects().stream()
+                .map(project -> new ProjectResponse(project.getProjectId(), project.getProjectName()))
+                .collect(Collectors.toSet());
 
         return new EmployeeResponse(
                 employee.getEmployeeId(),
@@ -91,6 +96,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EmployeeResponse> getEmployeesWithSalaryGreaterThan(Double salary) {
         List<Employee> employees = employeeRepository.findEmployeesWithSalaryGreaterThan(salary);
         return employees.stream()
