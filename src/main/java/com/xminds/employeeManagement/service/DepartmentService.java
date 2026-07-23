@@ -3,6 +3,8 @@ package com.xminds.employeeManagement.service;
 import com.xminds.employeeManagement.dto.DepartmentRequest;
 import com.xminds.employeeManagement.dto.DepartmentResponse;
 import com.xminds.employeeManagement.dto.EmployeeResponse;
+import com.xminds.employeeManagement.dto.ProjectRequest;
+import com.xminds.employeeManagement.dto.ProjectResponse;
 import java.util.List;
 
 public interface DepartmentService {
@@ -11,4 +13,6 @@ public interface DepartmentService {
     DepartmentResponse getDepartmentById(Long id);
     List<EmployeeResponse> getEmployeesByDepartmentId(Long departmentId);
     List<EmployeeResponse> getEmployeesWithSalaryGreaterThan(Double salary);
+
+
 }
