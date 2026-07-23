@@ -17,13 +17,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 
-
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
-
     private final EmployeeRepository repository;
     private final DepartmentRepository departmentRepository;
-
     private final ProjectRepository projectRepository;
 
     public EmployeeServiceImpl(EmployeeRepository repository, DepartmentRepository departmentRepository, ProjectRepository projectRepository) {
@@ -32,7 +29,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         this.projectRepository = projectRepository;
 
     }
-
     @Override
     public EmployeeResponse createEmployee(Long departmentId, EmployeeRequest request) {
         Department department = departmentRepository.findById(departmentId)
@@ -52,7 +48,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee savedEmployee = repository.save(employee);
         return mapToResponse(savedEmployee);
     }
-
     @Override
     public EmployeeResponse save(EmployeeRequest request) {
         Department department = null;
@@ -75,14 +70,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee savedEmployee = repository.save(employee);
         return mapToResponse(savedEmployee);
     }
-
     @Override
     public EmployeeResponse findById(Long id) {
         Employee employee = repository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id " + id));
         return mapToResponse(employee);
     }
-
     @Override
     public List<EmployeeResponse> findAll() {
         return repository.findAll().stream().map(this::mapToResponse).toList();
@@ -100,7 +93,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         } else {
             employee.setDepartment(null);
         }
-
         employee.setEmployeeName(request.employeeName());
         employee.setSalary(request.salary());
 
@@ -109,18 +101,15 @@ public class EmployeeServiceImpl implements EmployeeService {
             employee.getEmployeeProfile().setPhoneNumber(request.phoneNumber());
             employee.getEmployeeProfile().setDateOfBirth(request.dateOfBirth());
         }
-
         Employee updated = repository.save(employee);
         return mapToResponse(updated);
     }
-
     @Override
     public void delete(Long id) {
         Employee employee = repository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id " + id));
         repository.delete(employee);
     }
-
     private EmployeeResponse mapToResponse(Employee employee) {
         EmployeeProfile profile = employee.getEmployeeProfile();
 
@@ -128,7 +117,6 @@ public class EmployeeServiceImpl implements EmployeeService {
                 employee.getProjects().stream()
                         .map(p -> new com.xminds.employeeManagement.dto.ProjectResponse(p.getProjectId(), p.getProjectName()))
                         .collect(java.util.stream.Collectors.toSet());
-
         return new EmployeeResponse(
                 employee.getEmployeeId(),
                 employee.getEmployeeName(),
@@ -141,28 +129,24 @@ public class EmployeeServiceImpl implements EmployeeService {
                 projectDTOs
         );
     }
-
     @Override
     public List<EmployeeResponse> getEmployeesBySalaryRange(Double minSalary, Double maxSalary) {
         return repository.findBySalaryBetween(minSalary, maxSalary).stream()
                 .map(this::mapToResponse)
                 .toList();
     }
-
     @Override
     public List<EmployeeResponse> searchEmployeesByName(String searchText) {
         return repository.findByEmployeeNameContainingIgnoreCase(searchText).stream()
                 .map(this::mapToResponse)
                 .toList();
     }
-
     @Override
     public List<EmployeeResponse> getEmployeesByDeptAndMinSalary(Long deptId, Double minSalary) {
         return repository.findEmployeesByDeptAndMinSalary(deptId, minSalary).stream()
                 .map(this::mapToResponse)
                 .toList();
     }
-
     @Override
     public List<EmployeeResponse> getEmployeesByDepartmentName(String deptName) {
         return repository.findEmployeesByDepartmentName(deptName).stream()
@@ -174,13 +158,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         return repository.findByDepartmentId(departmentId, pageable)
                 .map(this::mapToResponse);
     }
-
     @Override
     public Page<EmployeeResponse> getHighSalaryEmployeesPaginated(Double minSalary, Pageable pageable) {
         return repository.findHighSalaryEmployees(minSalary, pageable)
                 .map(this::mapToResponse);
     }
-
     @Override
     public void assignProjectToEmployee(Long employeeId, Long projectId) {
         Employee employee = repository.findById(employeeId)
@@ -192,7 +174,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.addProject(project);
         repository.save(employee);
     }
-
     @Override
     public void allocateEmployeeToProject(Long projectId, Long employeeId) {
         Project project = projectRepository.findById(projectId)
@@ -211,6 +192,4 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .map(p -> new com.xminds.employeeManagement.dto.ProjectResponse(p.getProjectId(), p.getProjectName()))
                 .toList();
     }
-
-
 }
