@@ -106,20 +106,6 @@ public class EmployeeController {
         service.allocateEmployeeToProject(projectId, employeeId);
         return "Employee successfully allocated to Project.";
     }
-    @Autowired
-    private com.xminds.employeeManagement.repository.ProjectRepository projectRepository;
-
-    @PostMapping("/projects/create")
-    public String createProject(@RequestParam String name) {
-        com.xminds.employeeManagement.entity.Project p = new com.xminds.employeeManagement.entity.Project();
-        p.setProjectName(name);
-        projectRepository.save(p);
-        return "Project created successfully!";
-    }
-    @GetMapping("/projects")
-    public List<com.xminds.employeeManagement.dto.ProjectResponse> getAllProjects() {
-        return service.getAllProjects();
-    }
 
 
 
