@@ -7,5 +7,8 @@ public record EmployeeRequest(
         String address,
         String phoneNumber,
         String dateOfBirth,
-        Long departmentId
+        Long departmentId,
+        String email,
+        String password,
+        String role
 ) {}
