@@ -1,24 +1,22 @@
 package com.xminds.employeeManagement.service;
 
-
-
 import com.xminds.employeeManagement.dto.EmployeeRequest;
 import com.xminds.employeeManagement.dto.EmployeeResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import java.util.List;
-import com.xminds.employeeManagement.dto.ProjectResponse;
+import org.springframework.security.core.userdetails.UserDetailsService; 
 
 import java.util.List;
 
-public interface EmployeeService {
+
+public interface EmployeeService extends UserDetailsService {
+
     EmployeeResponse save(EmployeeRequest request);
     EmployeeResponse findById(Long id);
     List<EmployeeResponse> findAll();
     EmployeeResponse update(Long id, EmployeeRequest request);
     void delete(Long id);
     EmployeeResponse createEmployee(Long departmentId, EmployeeRequest request);
-
     List<EmployeeResponse> getEmployeesBySalaryRange(Double minSalary, Double maxSalary);
     List<EmployeeResponse> searchEmployeesByName(String searchText);
     List<EmployeeResponse> getEmployeesByDeptAndMinSalary(Long deptId, Double minSalary);
@@ -26,11 +24,4 @@ public interface EmployeeService {
     Page<EmployeeResponse> getEmployeesByDepartmentPaginated(Long departmentId, Pageable pageable);
     Page<EmployeeResponse> getHighSalaryEmployeesPaginated(Double minSalary, Pageable pageable);
     void assignProjectToEmployee(Long employeeId, Long projectId);
-    void allocateEmployeeToProject(Long projectId, Long employeeId);
-    List<ProjectResponse> getAllProjects();
-
-
-
 }
-
-
