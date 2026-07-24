@@ -9,9 +9,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional; 
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+
+
+    Optional<Employee> findByEmail(String email);
+
     @Query("SELECT e FROM Employee e WHERE e.salary > :salary")
     List<Employee> findEmployeesWithSalaryGreaterThan(@Param("salary") Double salary);
 
@@ -27,6 +32,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     @Query("SELECT e FROM Employee e WHERE e.salary > :minSalary")
     Page<Employee> findHighSalaryEmployees(@Param("minSalary") Double minSalary, Pageable pageable);
-    Page<Employee> findByDepartmentId(Long departmentId, Pageable pageable);
 
+    Page<Employee> findByDepartmentId(Long departmentId, Pageable pageable);
 }
